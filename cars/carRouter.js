@@ -1,8 +1,8 @@
 const express = require('express');
 const knex = require('knex');
 const knexConfig = require('../knexfile');
-
 const db = knex(knexConfig.development);
+const { checkCarInput } = require('../middlewares/middlewares');
 
 const router = express.Router();
 
@@ -27,25 +27,22 @@ router.get('/:id', async (req, res) => {
 })
 
 //add a new car
-router.post('/',(req, res) => {
+router.post('/', checkCarInput, (req, res) => {
   let car = req.body;
-  if (!car.make || !car.model || !car.vin) {
-    res.status(400).json({ message: 'please specify car make, model, and vin' });
-  } else {
-    car.mileage = Number(car.mileage);
-    db('cars').insert(car)
-      .then(response => {
-        res.status(201).json(response);
-      })
-      .catch(error => {
-        res.status(500).json({ message: 'error adding car to db'})
-      })
-  }
+  db('cars')
+    .insert(car)
+    .then(response => {
+      res.status(201).json(response);
+    })
+    .catch(error => {
+      res.status(500).json({ message: 'error adding car to db'})
+    })
 })
 
 //delete a car
 router.delete('/:id', (req, res) => {
-  db('cars').where({ id: req.params.id})
+  db('cars')
+    .where({ id: req.params.id})
     .del()
     .then(response => {
       if (response > 0) {
@@ -60,26 +57,21 @@ router.delete('/:id', (req, res) => {
 })
 
 //edit a car
-router.put('/:id', (req, res) => {
+router.put('/:id', checkCarInput, (req, res) => {
   let car = req.body;
-  if (!car.make || !car.model || !car.vin) {
-    res.status(400).json({ message: 'please specify car make, model, and vin' });
-  } else {
-    car.mileage = Number(car.mileage);
-    db('cars')
-      .where({ id: req.params.id})
-      .update(car)
-      .then(response => {
-        if (response > 0) {
-          res.status(200).json(car);
-        } else {
-          res.status(404).json({ message: 'no car with this id exists' });
-        }
-      })
-      .catch(error => {
-        res.status(500).json({ message: 'error updating car in db' })
-      })
-  }
+  db('cars')
+    .where({ id: req.params.id})
+    .update(car)
+    .then(response => {
+      if (response > 0) {
+        res.status(200).json(car);
+      } else {
+        res.status(404).json({ message: 'no car with this id exists' });
+      }
+    })
+    .catch(error => {
+      res.status(500).json({ message: 'error updating car in db' })
+    })
 })
 
 

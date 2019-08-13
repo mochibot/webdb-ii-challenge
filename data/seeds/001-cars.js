@@ -13,10 +13,10 @@ exports.seed = function(knex) {
           mileage: 73426
         },
         {
-          make: 'Mitsubishi',
-          model: 'Endeavor',
-          vin:'4A4JN2AS6BE031267', 
-          mileage: 108437
+          make: 'Nissan',
+          model: 'Altima',
+          vin:'1N4AL2EP3DC236245', 
+          mileage: 78437
         },
         {
           make: 'Toyota',

@@ -1,9 +1,19 @@
 
 exports.up = function(knex) {
   return knex.schema.createTable('sales', table => {
-    table.integer('sales').unsigned().notNullable();
-    table.integer('cars_id').unsigned();
-    table.foreign('cars_id').references('cars.id');
+    table.increments();
+    table
+      .integer('sales')
+      .unsigned()
+      .notNullable();
+    table
+      .integer('cars_id')
+      .unsigned()
+      .notNullable()
+      .references('id')
+      .inTable('cars')
+      .onDelete('CASCADE')
+      .onUpdate('CASCADE');
   })
 };
 

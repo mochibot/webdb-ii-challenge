@@ -7,27 +7,27 @@ const { checkCarInput } = require('../middlewares/middlewares');
 const router = express.Router();
 
 //get all cars 
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
   try {
     const cars = await db('cars');
     res.status(200).json(cars);
-  } catch (error) {
-    res.status(500).json({ message: 'error retrieving cars info from db' })
+  } catch (error) { 
+    next(error);
   }
 })
 
 //get specific car 
-router.get('/:id', async (req, res) => {
+router.get('/:id', async (req, res, next) => {
   try {
     const car = await db('cars').where({ id: req.params.id })
     res.status(200).json(car);
   } catch (error) {
-    res.status(500).json({ message: 'error retrieving car info from db' })
+    next(error);
   }
 })
 
 //add a new car
-router.post('/', checkCarInput, (req, res) => {
+router.post('/', checkCarInput, (req, res, next) => {
   let car = req.body;
   db('cars')
     .insert(car)
@@ -35,12 +35,13 @@ router.post('/', checkCarInput, (req, res) => {
       res.status(201).json(response);
     })
     .catch(error => {
-      res.status(500).json({ message: 'error adding car to db'})
+      let warning = {message: 'error adding car to db' }
+      next(warning);
     })
 })
 
 //delete a car
-router.delete('/:id', (req, res) => {
+router.delete('/:id', (req, res, next) => {
   db('cars')
     .where({ id: req.params.id})
     .del()
@@ -52,12 +53,13 @@ router.delete('/:id', (req, res) => {
       }
     })
     .catch(error => {
-      res.status(500).json({ message: 'error deleting car from db'})
+      let warning = {message: 'error deleting car from db' }
+      next(warning);
     })
 })
 
 //edit a car
-router.put('/:id', checkCarInput, (req, res) => {
+router.put('/:id', checkCarInput, (req, res, next) => {
   let car = req.body;
   db('cars')
     .where({ id: req.params.id})
@@ -70,7 +72,8 @@ router.put('/:id', checkCarInput, (req, res) => {
       }
     })
     .catch(error => {
-      res.status(500).json({ message: 'error updating car in db' })
+      let warning = {message: 'error updating car in db' }
+      next(warning);
     })
 })
 

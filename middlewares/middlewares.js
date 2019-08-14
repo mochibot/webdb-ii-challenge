@@ -5,3 +5,11 @@ exports.checkCarInput = function (req, res, next) {
   }
   next();
 }
+
+exports.checkSalesInput = function (req, res, next) {
+  let record = req.body;
+  if (!record.sales || !record['cars_id']) {
+    res.status(404).json({ message: 'sales and cars_id are required' });
+  }
+  next();
+}
